@@ -19,14 +19,14 @@ contract setBet{
     string additionalDetails;    //pokazuje na kom sajtu ce biti objavljena resenja
     uint creatorFee; // koliko je fee ako trziste prodje kao invalid
     uint initialLiquidity; // ako se ne postavi, filtrira se kao invalid odmah od samog augura
-    bool public betFinished;
+    //bool public betFinished;
     enum Vote {YES, NO, INVALID}
     bool TWOset = false;
     Vote TentativeWinningOutcome;
     Vote OldTentativeWinningOutcome; // oko se promeni odgovor, zadrzava se prethodni
     uint predictionMarketFinished = 0;
     uint round = 0; // runda za koju se opovrgava predlozeno tacno resenje
-    uint threshold; // ako se dostigne ova granica, treba da se forkuje program
+    //uint threshold; // ako se dostigne ova granica, treba da se forkuje program
     uint roundLimit = 10*10**18; // limit novca da se postavi novo resenje kao tacno
     //neka na pocetku to bude 5 eth
     string predictionOutcome;
@@ -183,7 +183,7 @@ contract setBet{
     //     return  ledgerBookSelles[msg.sender].sellingPrice;
     // }
     function setToSellSell(uint sheres, uint sellingPrice) external{
-        require(betFinished == false, "Voting is over");
+      //  require(betFinished == false, "Voting is over");
         require(ledgerBookSell[msg.sender].sheres >= sheres, "You dont own that much sheres");
         require(ledgerBookSell[msg.sender].hasOpponent == true, "You don't have opponent");
         ledgerBookSelles[msg.sender].sheres = sheres;
@@ -374,7 +374,8 @@ contract setBet{
         require(OldTentativeWinningOutcome != TentativeWinningOutcome, 'Dispute didnt happened');
         require(round < 3, 'Market is invalid');
         listOfREPreporters[msg.sender] [_vote] -= listOfREPreportersRound[msg.sender] [_vote];
-        msg.sender.transfer(listOfREPreportersRound[msg.sender] [_vote]);
+        listOfREPBets[ _vote] -= listOfREPreportersRound[msg.sender][_vote]; 
+        msg.sender.transfer(listOfREPreportersRound[msg.sender][_vote]);
         }
         function rewardCorrectDispute(uint timeNow, Vote _wrongVote1, Vote _wrongVote2) external payable{  
         //ako se postavi pravo resenje
@@ -394,10 +395,10 @@ contract setBet{
         listOfREPreporters[msg.sender] [TentativeWinningOutcome] = 0;
         }
     function getWinningPrize(uint timeNow) external{
-        require(timeNow > endTime + setTentativeWinningOutcomeTime + disputePredictionTime*(round+1)+disputeTime, 'Dispute round didnt finish');
+       // require(timeNow > endTime + setTentativeWinningOutcomeTime + disputePredictionTime*(round+1)+disputeTime, 'Dispute round didnt finish');
         //nakon sto se zavrsi dispute runda
         //treba da se saceka jos jedan period pre nego sto krene da se dodeljuje novac
-        require(timeNow >  setTentativeWinningOutcomeTime + disputePredictionTime*(round+1) + dateOfResolve, 'Date of resolve didnt star yet');
+        require(timeNow >endTime + setTentativeWinningOutcomeTime + disputePredictionTime*(round+1) + disputeTime + dateOfResolve, 'Date of resolve didnt star yet');
         if(TentativeWinningOutcome == Vote.YES){
             // && (ledgerBookBuy[msg.sender].hasOpponent == true)
             if((ledgerBookBuy[msg.sender].sheres > 0)){

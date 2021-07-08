@@ -320,6 +320,7 @@ contract setMultipleBet{
         require(OldTentativeWinningOutcome != TentativeWinningOutcome, 'Dispute didnt happened');
         require(round < 3, 'Market is invalid');
         listOfREPreporters[msg.sender] [_vote] -= listOfREPreportersRound[msg.sender] [_vote];
+        listOfREPBets[ _vote] -= listOfREPreportersRound[msg.sender] [_vote]; 
         msg.sender.transfer(listOfREPreportersRound[msg.sender] [_vote]);
         }
         function rewardCorrectDispute(uint timeNow, Vote _wrongVote1, Vote _wrongVote2,
@@ -345,10 +346,10 @@ contract setMultipleBet{
         listOfREPreporters[msg.sender] [TentativeWinningOutcome] = 0;
         }
     function getWinningPrize(uint timeNow, uint forAgainst) external{
-        require(timeNow >  endTime + setTentativeWinningOutcomeTime + disputePredictionTime*(round+1)+disputeTime, 'Dispute round didnt finish');
+       // require(timeNow >  endTime + setTentativeWinningOutcomeTime + disputePredictionTime*(round+1)+disputeTime, 'Dispute round didnt finish');
         //nakon sto se zavrsi dispute runda
         //treba da se saceka jos jedan period pre nego sto krene da se dodeljuje novac
-        require(timeNow >  setTentativeWinningOutcomeTime + disputePredictionTime*(round+1) + dateOfResolve, 'Date of resolve didnt star yet');
+        require(timeNow > endTime + setTentativeWinningOutcomeTime + disputePredictionTime*(round+1) + disputeTime + dateOfResolve, 'Date of resolve didnt star yet');
          if(TentativeWinningOutcome == Vote.INVALID){
             if((ledgerBookSell[msg.sender].sheres > 0) && (ledgerBookSell[msg.sender].hasOpponent == true)){
             uint winningEther = (ledgerBookSell[msg.sender].sheres/ numberOfAnswers) * 10**18 ;
